@@ -23,6 +23,7 @@ log.info """\
  */
 process GENERATE_GENE_LISTS {
     publishDir "${params.outdir}/01_gene_lists", mode: 'copy'
+    memory '8 GB'
     
     conda "${params.conda_env}"
     
@@ -45,7 +46,7 @@ process GENERATE_GENE_LISTS {
  * Process 2: Select genes and apply CPM normalization
  */
 process SELECT_GENES_AND_CPM {
-    tag "$h5ad.simpleName"
+    tag "$h5ad.baseName"
     publishDir "${params.outdir}/02_cpm_normalized", mode: 'copy'
     
     conda "${params.conda_env}"
@@ -55,13 +56,13 @@ process SELECT_GENES_AND_CPM {
     path gene_lists
     
     output:
-    path "${h5ad.name}", emit: cpm_h5ad
+    path "cpm/${h5ad.baseName}.h5ad", emit: cpm_h5ad
     
     script:
     """
     python ${projectDir}/bin/selectGenesCPM.py \\
         --input ${h5ad} \\
-        --output ${h5ad.name} \\
+        --output cpm/${h5ad.baseName}.h5ad \\
         --gene_lists ${gene_lists} \\
         --strategy ${params.gene_selection_strategy} \\
         --cpm_normalize \\
@@ -73,7 +74,7 @@ process SELECT_GENES_AND_CPM {
  * Process 3: Compute coexpression for each h5ad file
  */
 process COMPUTE_COEXPRESSION {
-    tag "$h5ad.simpleName"
+    tag "$h5ad.baseName"
     publishDir "${params.outdir}/03_coexpression", mode: 'copy'
     
     conda "${params.conda_env}"
@@ -90,6 +91,11 @@ process COMPUTE_COEXPRESSION {
     def replace_nans_arg = params.replace_nans ? '--replace_nans' : ''
     def min_cells_arg = params.min_cells ? "--min_cells_threshold ${params.min_cells}" : ''
     """
+    export OMP_NUM_THREADS=${task.cpus}
+    export OPENBLAS_NUM_THREADS=${task.cpus}
+    export MKL_NUM_THREADS=${task.cpus}
+    export NUMEXPR_NUM_THREADS=${task.cpus}
+
     python ${projectDir}/bin/computeCorrelation.py \\
         --input_file ${h5ad} \\
         --output_dir . \\

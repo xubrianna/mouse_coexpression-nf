@@ -11,8 +11,7 @@ def analyze_gene_dict(gene_dict, frequency_threshold=0.2):
     """
     Processes a gene dictionary to generate:
     1. A list of genes found per cell type across all studies (stringent).
-    2. A list of genes found per cell type in at least 70% of the studies (less stringent).
-    2. A list of genes found per cell type in at least 1/5 of the studies (less stringent).
+    2. A list of genes found per cell type in at least __ of the studies (less stringent).
     3. A dictionary of pairwise intersections of "less stringent" gene lists between cell types.
     
     Args:
@@ -21,7 +20,7 @@ def analyze_gene_dict(gene_dict, frequency_threshold=0.2):
     Returns:
         dict: Results with keys:
             - 'stringent': Genes found across all studies per cell type.
-            - 'less_stringent': Genes found in at least 70% of studies per cell type.
+            - 'less_stringent': Genes found in at least __ of studies per cell type.
             - 'pairwise_intersections': Intersections of "less stringent" lists between cell types.
     """
     results = {

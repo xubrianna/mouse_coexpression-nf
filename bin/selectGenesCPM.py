@@ -34,7 +34,7 @@ def slcGenes_and_cpm_adata(file_path, selected_genes, cpm_normalize=False, log_t
         del data_filtered
         gc.collect()
     else:
-        data_filtered_new = data_filtered
+        data_filtered_new = data_filtered.copy()
 
     data_filtered_new.X = scipy.sparse.csr_matrix(data_filtered_new.X)
 
@@ -73,7 +73,17 @@ def main():
     parser.add_argument('--no_log_transform', action='store_true', help='Skip log transformation')
     args = parser.parse_args()
 
-    print(f"Processing file: {args.input}")
+    input_path = Path(args.input).resolve()
+    output_path = Path(args.output).resolve()
+
+    if input_path == output_path:
+        raise ValueError(
+            f"Refusing in-place write: input and output are the same file ({input_path})"
+        )
+
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+
+    print(f"Processing file: {input_path}")
 
     # Load gene sets
     with open(args.gene_lists, "r") as fp:
@@ -100,15 +110,15 @@ def main():
 
     # Apply filtering and normalization
     filtered_data = slcGenes_and_cpm_adata(
-        args.input,
+        input_path,
         selected_genes,
         cpm_normalize=args.cpm_normalize,
         log_transform=not args.no_log_transform
     )
 
     # Save
-    filtered_data.write_h5ad(args.output, compression="gzip")
-    print(f"Saved processed file to: {args.output}")
+    filtered_data.write_h5ad(output_path, compression="gzip")
+    print(f"Saved processed file to: {output_path}")
 
 if __name__ == "__main__":
     main()
