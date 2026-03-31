@@ -300,7 +300,7 @@ def main():
     parser.add_argument("--category", type=str, default=None, help="Disease category (or 'ALL' for all samples).")
     parser.add_argument("--correlation_type", type=str, default="pearson",
                         choices=["pearson", "spearman"], help="Type of correlation.")
-    parser.add_argument("--replace_nans", action='store_true', help="Replace NaNs with median.")
+    parser.add_argument("--replace_nans", action='store_true', help="Replace NaNs with mean.")
     parser.add_argument("--xCellxSubject", action='store_true',
                         help="If set, compute correlation across all samples instead of per-sample aggregation.")
     parser.add_argument("--min_cells_threshold", type=int, default=20,
