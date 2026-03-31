@@ -5,7 +5,6 @@ import json
 from pathlib import Path
 from itertools import combinations
 import anndata as ad
-import scanpy as sc
 
 def analyze_gene_dict(gene_dict, frequency_threshold=0.2):
     """
@@ -82,7 +81,7 @@ def process_h5ad_files(directory):
     for file_path in directory.glob("*.h5ad"):
         print(f"\nProcessing file: {file_path.name}")
         # Load the AnnData object
-        adata = sc.read_h5ad(file_path)
+        adata = ad.read_h5ad(file_path)
         print(f"Loaded data with {adata.n_obs} cells and {adata.n_vars} genes.")
 
         # Extract metadata (cell type, study name)      
