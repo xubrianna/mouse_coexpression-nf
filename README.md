@@ -30,9 +30,8 @@ CellType_StudyName.h5ad
 ```
 
 Examples:
-- `Ast_Tasic2018.h5ad`
 - `Mic_ROSMAP.h5ad`
-- `Exc_Zeng2023.h5ad`
+- `Exc_GSE123456.h5ad`
 
 These files should already be:
 - Filtered for genes (e.g., expressed in >2% of cells)
